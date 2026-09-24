@@ -29,6 +29,9 @@ const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
+// Trust proxy for reverse proxies (Vercel, Render, Nginx)
+app.set('trust proxy', 1);
+
 // Connect Database if not in test mode
 if (process.env.NODE_ENV !== 'test') {
   connectDB();
