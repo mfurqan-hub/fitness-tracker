@@ -31,13 +31,17 @@ const sanitizeData = (data) => {
 };
 
 const writeToFile = (level, message, meta = null) => {
+  if (process.env.VERCEL) return;
   try {
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
     const logLine = `[${getTimestamp()}] [${level.toUpperCase()}] ${message} ${
       meta ? JSON.stringify(sanitizeData(meta)) : ''
     }\n`;
     fs.appendFileSync(path.join(logDir, 'app.log'), logLine);
   } catch (err) {
-    console.error('Failed to write to log file:', err.message);
+    // Ignore file write errors
   }
 };
 
