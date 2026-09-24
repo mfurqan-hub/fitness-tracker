@@ -289,6 +289,27 @@ const RegisterPage = () => {
     navigate('/dashboard', { replace: true });
   };
 
+  useEffect(() => {
+    const processRedirect = async () => {
+      try {
+        const res = await firebaseAuthService.checkRedirectResult();
+        if (res && res.success && res.idToken) {
+          setGoogleLoading(true);
+          const authRes = await loginWithFirebase(res.idToken);
+          if (authRes.success) {
+            navigate(authRes.user?.role === 'admin' ? '/admin/dashboard' : '/dashboard', { replace: true });
+          } else {
+            setErrorMsg(authRes.message || 'Google registration authorization failed.');
+          }
+          setGoogleLoading(false);
+        }
+      } catch (err) {
+        console.error('Redirect sign-in error:', err);
+      }
+    };
+    processRedirect();
+  }, []);
+
   const handleGoogleSignIn = async () => {
     setErrorMsg('');
     setGoogleLoading(true);
@@ -297,6 +318,7 @@ const RegisterPage = () => {
       const socialRes = await firebaseAuthService.signInWithGoogle();
 
       if (!socialRes.success) {
+        if (socialRes.redirecting) return;
         setErrorMsg(socialRes.error || 'Google sign-in was cancelled.');
         setGoogleLoading(false);
         return;

@@ -57,6 +57,27 @@ const LoginPage = () => {
     }
   };
 
+  useEffect(() => {
+    const processRedirect = async () => {
+      try {
+        const res = await firebaseAuthService.checkRedirectResult();
+        if (res && res.success && res.idToken) {
+          setGoogleLoading(true);
+          const authRes = await loginWithFirebase(res.idToken);
+          if (authRes.success) {
+            handlePostLoginRedirect(authRes.user?.role);
+          } else {
+            setErrorMsg(authRes.message || 'Google login authorization failed.');
+          }
+          setGoogleLoading(false);
+        }
+      } catch (err) {
+        console.error('Redirect sign-in error:', err);
+      }
+    };
+    processRedirect();
+  }, []);
+
   const handleGoogleSignIn = async () => {
     setErrorMsg('');
     setGoogleLoading(true);
@@ -65,6 +86,7 @@ const LoginPage = () => {
       const socialRes = await firebaseAuthService.signInWithGoogle();
 
       if (!socialRes.success) {
+        if (socialRes.redirecting) return;
         setErrorMsg(socialRes.error || 'Google sign-in cancelled or failed.');
         setGoogleLoading(false);
         return;
