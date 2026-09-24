@@ -10,6 +10,8 @@ const initFirebaseAdmin = () => {
   let privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
   if (privateKey) {
+    // Strip wrapping quotes if pasted with quotes in Vercel UI
+    privateKey = privateKey.trim().replace(/^["']|["']$/g, '');
     // Handle escaped newlines from environment variable strings
     privateKey = privateKey.replace(/\\n/g, '\n');
   }
@@ -30,16 +32,10 @@ const initFirebaseAdmin = () => {
       logger.info('Firebase Admin SDK initialized successfully.');
     } catch (err) {
       logger.error('Failed to initialize Firebase Admin SDK:', err.message);
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error(`Firebase Admin configuration error in production: ${err.message}`);
-      }
+      // Do not throw fatal error on lambda load so standard auth / API routes continue functioning
     }
   } else {
-    if (process.env.NODE_ENV === 'production') {
-      logger.error('Firebase Admin credentials missing in production environment.');
-    } else {
-      logger.warn('Firebase Admin credentials missing. Social authentication requires valid FIREBASE_* environment variables.');
-    }
+    logger.warn('Firebase Admin credentials incomplete or missing. Google Social Auth will be disabled.');
   }
 
   return isInitialized;
