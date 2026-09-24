@@ -35,10 +35,11 @@ const connectDB = async () => {
         logger.warn('Serverless environment detected. Continuing request handling...');
         return;
       }
+      logger.warn('Falling back to local in-memory MongoDB for seamless development...');
     }
   }
 
-  if (useMemory && !isServerless) {
+  if (!isServerless) {
     try {
       if (mongoose.connection.readyState !== 0) {
         await mongoose.disconnect();

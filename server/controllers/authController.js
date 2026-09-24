@@ -60,6 +60,7 @@ const register = async (req, res, next) => {
     // Generate 6-digit OTP
     const otp = generateOtp();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    logger.info(`[DEV OTP] 🔑 Verification OTP for ${email}: ${otp}`);
 
     const user = await User.create({
       name,
@@ -142,6 +143,7 @@ const sendOtp = async (req, res, next) => {
 
     const otp = generateOtp();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+    logger.info(`[DEV OTP] 🔑 Resent OTP for ${email}: ${otp}`);
 
     user.emailOtp = otp;
     user.emailOtpExpires = otpExpires;
