@@ -113,7 +113,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   const server = app.listen(PORT, () => {
     logger.info(`Fitness Tracker Backend Server running on port ${PORT} in [${process.env.NODE_ENV || 'development'}] mode.`);
     logger.info(`API Base URL: http://localhost:${PORT}/api`);
