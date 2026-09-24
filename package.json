@@ -1,0 +1,28 @@
+{
+  "name": "fitness-tracker-mern",
+  "version": "1.0.0",
+  "description": "Production-grade MERN Stack Fitness Tracker Web Application for Academic eProject",
+  "main": "server/server.js",
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "dev": "npx concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "seed": "cd server && npm run seed",
+    "test": "cd server && npm test",
+    "build": "cd client && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "mern",
+    "fitness-tracker",
+    "react",
+    "nodejs",
+    "express",
+    "mongodb"
+  ],
+  "author": "Academic eProject Team",
+  "license": "MIT"
+}
